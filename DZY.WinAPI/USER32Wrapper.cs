@@ -392,15 +392,16 @@ namespace DZY.WinAPI
     {
         public uint length;
         public uint flags;
-        public uint showCmd;
+        public WINDOWPLACEMENTFlags showCmd;
         public POINT ptMinPosition;
         public POINT ptMaxPosition;
         public RECT rcNormalPosition;
     }
 
     //https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagwindowplacement#SW_SHOWMAXIMIZED
+
     [Flags]
-    public enum WINDOWPLACEMENTFlags
+    public enum WINDOWPLACEMENTFlags : uint
     {
         SW_HIDE = 0,
         SW_MAXIMIZE = 3,
@@ -415,11 +416,26 @@ namespace DZY.WinAPI
         SW_SHOWNORMAL = 1
     }
 
-    public class USER32Wrapper
+    public class User32Wrapper
     {
         public const int SPI_SETDESKWALLPAPER = 20;
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowThreadProcessId")]
+        private static extern int GetWindowThreadProcessId(IntPtr hwnd, out int ID);
+
+        /// <summary>
+        /// 获取窗口的进程号
+        /// </summary>
+        /// <param name="hwnd">窗口句柄</param>
+        /// <returns>进程号</returns>
+        public static int GetProcessId(IntPtr hwnd)
+        {
+            int processId;
+            GetWindowThreadProcessId(hwnd, out processId);
+            return processId;
+        }
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll")]
