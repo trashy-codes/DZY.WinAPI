@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -422,8 +424,14 @@ namespace DZY.WinAPI
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
 
+        public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
+
+        [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumDelegate lpEnumCallbackFunction, IntPtr lParam);
+
+
         [DllImport("user32.dll", EntryPoint = "GetWindowThreadProcessId")]
-        private static extern int GetWindowThreadProcessId(IntPtr hwnd, out int ID);
+        public static extern int GetWindowThreadProcessId(IntPtr hwnd, out int ID);
 
         /// <summary>
         /// 获取窗口的进程号
@@ -497,7 +505,7 @@ namespace DZY.WinAPI
         public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int GetWindowTextLength(IntPtr hWnd);
+        public static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
