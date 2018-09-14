@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -336,6 +337,9 @@ namespace DZY.WinAPI
         EVENT_SYSTEM_SCROLLINGEND = 0x00000013,
         EVENT_SYSTEM_SWITCHSTART = 0x00000014,
         EVENT_SYSTEM_SWITCHEND = 0x00000015,
+        /// <summary>
+        /// 窗口最小化
+        /// </summary>
         EVENT_SYSTEM_MINIMIZESTART = 0x00000016,
         EVENT_SYSTEM_MINIMIZEEND = 0x00000017,
         EVENT_CONSOLE_CARET = 0x00004001,
@@ -378,12 +382,49 @@ namespace DZY.WinAPI
         WINEVENT_INCONTEXT = 0x4
     }
 
+    public struct POINT
+    {
+        public long x;
+        public long y;
+    }
+
+    public struct WINDOWPLACEMENT
+    {
+        public uint length;
+        public uint flags;
+        public uint showCmd;
+        public POINT ptMinPosition;
+        public POINT ptMaxPosition;
+        public RECT rcNormalPosition;
+    }
+
+    //https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagwindowplacement#SW_SHOWMAXIMIZED
+    [Flags]
+    public enum WINDOWPLACEMENTFlags
+    {
+        SW_HIDE = 0,
+        SW_MAXIMIZE = 3,
+        SW_MINIMIZE = 6,
+        SW_RESTORE = 9,
+        SW_SHOW = 5,
+        SW_SHOWMAXIMIZED = 3,
+        SW_SHOWMINIMIZED = 2,
+        SW_SHOWMINNOACTIVE = 7,
+        SW_SHOWNA = 8,
+        SW_SHOWNOACTIVATE = 4,
+        SW_SHOWNORMAL = 1
+    }
+
     public class USER32Wrapper
     {
         public const int SPI_SETDESKWALLPAPER = 20;
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
-        
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
 
