@@ -418,12 +418,23 @@ namespace DZY.WinAPI
         SW_SHOWNORMAL = 1
     }
 
+    public struct PRECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
     public class User32Wrapper
     {
         public const int SPI_SETDESKWALLPAPER = 20;
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
 
+        [DllImport("user32.dll", EntryPoint = "GetWindowRect")]
+        public static extern bool GetWindowRect(IntPtr hWnd, out PRECT lpRect);
+        
         public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
 
         [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
