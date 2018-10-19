@@ -557,7 +557,7 @@ namespace DZY.WinAPI
         /// <param name="flags">The ancestor to be retrieved.</param>
         /// <returns>The return value is the handle to the ancestor window.</returns>
         [DllImport("user32.dll", ExactSpelling = true)]
-        static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
+        public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
         [DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hwnd, int index);
 
