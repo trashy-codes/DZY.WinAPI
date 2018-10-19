@@ -436,7 +436,21 @@ namespace DZY.WinAPI
         public const int GWL_EXSTYLE = -20;
         public const int GWL_USERDATA = -21;
     }
-
+    public enum GetAncestorFlags
+    {
+        /// <summary>
+        /// Retrieves the parent window. This does not include the owner, as it does with the GetParent function. 
+        /// </summary>
+        GetParent = 1,
+        /// <summary>
+        /// Retrieves the root window by walking the chain of parent windows.
+        /// </summary>
+        GetRoot = 2,
+        /// <summary>
+        /// Retrieves the owned root window by walking the chain of parent and owner windows returned by GetParent. 
+        /// </summary>
+        GetRootOwner = 3
+    }
     /// <summary>
     /// WindowStyles and Extended Window Styles
     /// </summary>
@@ -535,7 +549,15 @@ namespace DZY.WinAPI
         public const int SPI_SETDESKWALLPAPER = 20;
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
-
+        /// <summary>
+        /// Retrieves the handle to the ancestor of the specified window. 
+        /// </summary>
+        /// <param name="hwnd">A handle to the window whose ancestor is to be retrieved. 
+        /// If this parameter is the desktop window, the function returns NULL. </param>
+        /// <param name="flags">The ancestor to be retrieved.</param>
+        /// <returns>The return value is the handle to the ancestor window.</returns>
+        [DllImport("user32.dll", ExactSpelling = true)]
+        static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
         [DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hwnd, int index);
 
