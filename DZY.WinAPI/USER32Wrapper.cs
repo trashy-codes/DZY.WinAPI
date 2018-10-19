@@ -543,12 +543,47 @@ namespace DZY.WinAPI
         public const uint WS_EX_COMPOSITED = 0x02000000;
         public const uint WS_EX_NOACTIVATE = 0x08000000;
     }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINTSTRUCT
+    {
+        public int x;
+        public int y;
+        public POINTSTRUCT(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public class MONITORINFO
+    {
+        public int cbSize = sizeof(int) * 10;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public int dwFlags;
+    }
 
     public class User32Wrapper
     {
         public const int SPI_SETDESKWALLPAPER = 20;
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
+
+        public const int MONITOR_DEFAULTTONULL = 0;
+        public const int MONITOR_DEFAULTTOPRIMARY = 1;
+        public const int MONITOR_DEFAULTTONEAREST = 2;
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetMonitorInfo(IntPtr hmonitor, [In, Out] MONITORINFO monitorInfo);
+
+        [DllImport("User32.dll", ExactSpelling = true)]
+        public static extern IntPtr MonitorFromPoint(POINTSTRUCT pt, int flags);
+
+
         /// <summary>
         /// Retrieves the handle to the ancestor of the specified window. 
         /// </summary>
