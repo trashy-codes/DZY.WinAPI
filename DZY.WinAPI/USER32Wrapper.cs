@@ -543,7 +543,7 @@ namespace DZY.WinAPI
         public const uint WS_EX_COMPOSITED = 0x02000000;
         public const uint WS_EX_NOACTIVATE = 0x08000000;
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct POINTSTRUCT
     {
@@ -597,7 +597,7 @@ namespace DZY.WinAPI
         public static extern int GetWindowLong(IntPtr hwnd, int index);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowRect")]
-        public static extern bool GetWindowRect(IntPtr hWnd, out PRECT lpRect);
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
 
@@ -655,6 +655,12 @@ namespace DZY.WinAPI
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
+
+        public static bool SetWindowPos(IntPtr targeHandler, RECT rect)
+        {
+            var ok = SetWindowPos(targeHandler, IntPtr.Zero, rect.Left, rect.Top, rect.Width, rect.Height, 0);
+            return ok;
+        }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, StringBuilder vParam, UInt32 winIni);
