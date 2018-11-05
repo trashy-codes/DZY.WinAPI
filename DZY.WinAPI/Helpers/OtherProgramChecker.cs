@@ -10,7 +10,7 @@ namespace DZY.WinAPI.Helpers
         private bool _maximized = false;
         private int _currentProcessId;
         private bool _onlyFullScreen;
-        
+
         public OtherProgramChecker(int currentProcess, bool onlyFullScreen = false)
         {
             _currentProcessId = currentProcess;
@@ -49,6 +49,8 @@ namespace DZY.WinAPI.Helpers
             User32Wrapper.GetWindowPlacement(handle, ref placment);
             var pid = User32Wrapper.GetProcessId(handle);
 
+            //var title = User32Wrapper.GetWindowText(handle);
+            //System.Diagnostics.Debug.WriteLine(title);
             bool visible = User32Wrapper.IsWindowVisible(handle);
             if (visible)
             {

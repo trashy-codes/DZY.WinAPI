@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DZY.WinAPI", "DZY.WinAPI\DZY.WinAPI.csproj", "{8C86065A-E7A7-4C67-BD0E-6603EA8F34BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DZY.WinAPI", "DZY.WinAPI\DZY.WinAPI.csproj", "{8C86065A-E7A7-4C67-BD0E-6603EA8F34BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{7E6D13FC-65B9-46A5-AD69-A5534FDCDEF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8C86065A-E7A7-4C67-BD0E-6603EA8F34BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C86065A-E7A7-4C67-BD0E-6603EA8F34BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C86065A-E7A7-4C67-BD0E-6603EA8F34BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E6D13FC-65B9-46A5-AD69-A5534FDCDEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E6D13FC-65B9-46A5-AD69-A5534FDCDEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E6D13FC-65B9-46A5-AD69-A5534FDCDEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E6D13FC-65B9-46A5-AD69-A5534FDCDEF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
