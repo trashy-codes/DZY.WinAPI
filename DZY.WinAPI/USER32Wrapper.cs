@@ -7,6 +7,7 @@ using System.Text;
 
 namespace DZY.WinAPI
 {
+    #region  structs
     /// <summary>Values to pass to the GetDCEx method.</summary>
     [Flags()]
     public enum DeviceContextValues : uint
@@ -418,14 +419,6 @@ namespace DZY.WinAPI
         SW_SHOWNORMAL = 1
     }
 
-    public struct PRECT
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
-    }
-
     public abstract class WindowLongConstants
     {
         public const int GWL_WNDPROC = -4;
@@ -564,6 +557,99 @@ namespace DZY.WinAPI
         public int dwFlags;
     }
 
+    [Flags]
+    public enum DisplayDeviceStateFlags
+    {
+        /// <summary>
+        /// The device is part of the desktop.
+        /// </summary>
+        AttachedToDesktop = 0x1,
+
+        /// <summary>
+        /// Multi Driver
+        /// </summary>
+        MultiDriver = 0x2,
+
+        /// <summary>
+        /// The device is part of the desktop.
+        /// </summary>
+        PrimaryDevice = 0x4,
+
+        /// <summary>
+        /// Represents a pseudo device used to mirror application drawing for remoting or other purposes.
+        /// </summary>
+        MirroringDriver = 0x8,
+
+        /// <summary>
+        /// The device is VGA compatible.
+        /// </summary>
+        VgaCompatible = 0x10,
+
+        /// <summary>
+        /// The device is removable; it cannot be the primary display.
+        /// </summary>
+        Removable = 0x20,
+
+        /// <summary>
+        /// The device has more display modes than its output devices support.
+        /// </summary>
+        ModesPruned = 0x8000000,
+
+        /// <summary>
+        /// Remote
+        /// </summary>
+        Remote = 0x4000000,
+
+        /// <summary>
+        /// Disconnect
+        /// </summary>
+        Disconnect = 0x2000000
+    }
+
+    /// <summary>
+    /// Display Device structure
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct DisplayDevice
+    {
+        /// <summary>
+        /// cb
+        /// </summary>
+        [MarshalAs(UnmanagedType.U4)]
+        public int cb;
+
+        /// <summary>
+        /// Device Name
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string DeviceName;
+
+        /// <summary>
+        /// Device String
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string DeviceString;
+
+        /// <summary>
+        /// Display Device State Flags
+        /// </summary>
+        [MarshalAs(UnmanagedType.U4)]
+        public DisplayDeviceStateFlags StateFlags;
+
+        /// <summary>
+        /// Device ID
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string DeviceID;
+
+        /// <summary>
+        /// Device Key
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string DeviceKey;
+    }
+    #endregion
+
     public class User32Wrapper
     {
         public const int SPI_SETDESKWALLPAPER = 20;
@@ -573,6 +659,52 @@ namespace DZY.WinAPI
         public const int MONITOR_DEFAULTTONULL = 0;
         public const int MONITOR_DEFAULTTOPRIMARY = 1;
         public const int MONITOR_DEFAULTTONEAREST = 2;
+        /// <summary>
+        ///  Display Device StateFlags
+        /// </summary>
+
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplayDevices(string device, uint devNum, ref DisplayDevice displayDevice, uint flags);
+
+        public static List<DisplayDevice> Display()
+        {
+            DisplayDevice d = new DisplayDevice();
+            var devices = new List<DisplayDevice>();
+            d.cb = Marshal.SizeOf(d);
+
+            for (uint id = 0; EnumDisplayDevices(null, id, ref d, 0); id++)
+            {
+                if (d.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
+                {
+                    d.cb = Marshal.SizeOf(d);
+                    EnumDisplayDevices(d.DeviceName, 0, ref d, 0);
+                    Console.WriteLine("{0}, {1}", d.DeviceName, d.DeviceString);
+                }
+
+                d.cb = Marshal.SizeOf(d);
+                devices.Add(d);
+            }
+            return devices;
+        }
+
+        public static int GetDisplayCount()
+        {
+            int dwCount = 0;
+
+            MonitorEnumDelegate dCallback = (IntPtr hDesktop, IntPtr hdc, ref RECT pRect, int d) => ++dwCount > 0;
+
+            if (EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, dCallback, 0))
+            {
+                return dwCount;
+            }
+
+            return -1;
+        }
+
+        public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, int dwData);
+
+        [DllImport("user32.dll")]
+        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, int dwData);
 
         [DllImport("user32.dll")]
         public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);

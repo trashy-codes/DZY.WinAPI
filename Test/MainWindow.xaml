@@ -9,6 +9,7 @@
     <Grid>
         <StackPanel>
             <Button Click="Button_Click">CheckFullScreen</Button>
+            <Button Click="BtnTest_Click">Test</Button>
         </StackPanel>
     </Grid>
 </Window>

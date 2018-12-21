@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DZY.WinAPI;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -32,6 +33,12 @@ namespace Test
             int pid = Process.GetCurrentProcess().Id;
             var result = new DZY.WinAPI.Helpers.OtherProgramChecker(pid, true).CheckMaximized();
             MessageBox.Show(result.ToString());
+        }
+
+        private void BtnTest_Click(object sender, RoutedEventArgs e)
+        {
+            int test = User32Wrapper.GetDisplayCount();
+            var test2 = User32Wrapper.Display();
         }
     }
 }
