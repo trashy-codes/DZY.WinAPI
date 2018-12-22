@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -8,13 +9,11 @@ namespace DZY.WinAPI.Helpers
     public class OtherProgramChecker
     {
         private bool _maximized = false;
-        private int _currentProcessId;
-        private bool _onlyFullScreen;
+        private static Process _currentProcess;
 
-        public OtherProgramChecker(int currentProcess, bool onlyFullScreen = false)
+        public OtherProgramChecker(Process currentProcess)
         {
-            _currentProcessId = currentProcess;
-            _onlyFullScreen = onlyFullScreen;
+            _currentProcess = currentProcess;
         }
 
         public bool CheckMaximized()
@@ -27,34 +26,32 @@ namespace DZY.WinAPI.Helpers
         {
             //过滤当前进程
             int pid = User32Wrapper.GetProcessId(hWnd);
-            if (pid == _currentProcessId)
+            if (pid == _currentProcess.Id)
                 return true;
 
-            _maximized = IsMAXIMIZED(hWnd, _onlyFullScreen);
+            _maximized = IsMAXIMIZED(hWnd);
             if (_maximized)
                 return false;
 
             return true;
         }
 
+
         /// <summary>
         /// 窗口是否是最大化
         /// </summary>
         /// <param name="handle"></param>
-        /// <param name="onlyFullScreen">是否只检测全屏，任务栏没遮挡就不算全屏</param>
         /// <returns></returns>
-        public static bool IsMAXIMIZED(IntPtr handle, bool onlyFullScreen)
+        public static bool IsMAXIMIZED(IntPtr handle)
         {
             WINDOWPLACEMENT placment = new WINDOWPLACEMENT();
             User32Wrapper.GetWindowPlacement(handle, ref placment);
             var pid = User32Wrapper.GetProcessId(handle);
 
-            //var title = User32Wrapper.GetWindowText(handle);
-            //System.Diagnostics.Debug.WriteLine(title);
             bool visible = User32Wrapper.IsWindowVisible(handle);
             if (visible)
             {
-                if (!onlyFullScreen && placment.showCmd == WINDOWPLACEMENTFlags.SW_SHOWMAXIMIZED)
+                if (placment.showCmd == WINDOWPLACEMENTFlags.SW_SHOWMAXIMIZED)
                 {//窗口最大化
                     // Exclude suspended Windows apps
                     int ok = DwmapiWrapper.DwmGetWindowAttribute(handle, DwmapiWrapper.DWMWINDOWATTRIBUTE.DWMWA_CLOAKED, out var cloaked, Marshal.SizeOf<bool>());

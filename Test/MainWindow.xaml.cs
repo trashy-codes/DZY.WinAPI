@@ -31,8 +31,8 @@ namespace Test
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             await Task.Delay(2000);
-            int pid = Process.GetCurrentProcess().Id;
-            var result = new DZY.WinAPI.Helpers.OtherProgramChecker(pid, true).CheckMaximized();
+            var cp = Process.GetCurrentProcess();
+            var result = new DZY.WinAPI.Helpers.OtherProgramChecker(cp).CheckMaximized();
             MessageBox.Show(result.ToString());
         }
 
