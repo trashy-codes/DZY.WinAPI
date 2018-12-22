@@ -37,7 +37,8 @@ namespace Test
 
         private void BtnTest_Click(object sender, RoutedEventArgs e)
         {
-            int test = User32Wrapper.GetDisplayCount();
+            var test0 = System.Windows.Forms.Screen.AllScreens;
+            var test = User32Wrapper.GetDisplays();
             var test2 = User32Wrapper.Display();
         }
     }

@@ -659,9 +659,12 @@ namespace DZY.WinAPI
         public const int MONITOR_DEFAULTTONULL = 0;
         public const int MONITOR_DEFAULTTOPRIMARY = 1;
         public const int MONITOR_DEFAULTTONEAREST = 2;
-        /// <summary>
-        ///  Display Device StateFlags
-        /// </summary>
+
+        [DllImport("user32", ExactSpelling = true, SetLastError = true)]
+        public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, [In, Out] ref RECT rect, [MarshalAs(UnmanagedType.U4)] int cPoints);
+
+        [DllImport("user32", ExactSpelling = true, SetLastError = true)]
+        public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, [In, Out] ref System.Drawing.Point pt, [MarshalAs(UnmanagedType.U4)] int cPoints);
 
         [DllImport("user32.dll")]
         private static extern bool EnumDisplayDevices(string device, uint devNum, ref DisplayDevice displayDevice, uint flags);
@@ -687,18 +690,24 @@ namespace DZY.WinAPI
             return devices;
         }
 
-        public static int GetDisplayCount()
+        public static List<MONITORINFO> GetDisplays()
         {
-            int dwCount = 0;
-
-            MonitorEnumDelegate dCallback = (IntPtr hDesktop, IntPtr hdc, ref RECT pRect, int d) => ++dwCount > 0;
-
-            if (EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, dCallback, 0))
+            var tmp = new List<MONITORINFO>();
+            MonitorEnumDelegate callback = (IntPtr hDesktop, IntPtr hdc, ref RECT rect, int d) =>
             {
-                return dwCount;
+                MONITORINFO info = new MONITORINFO();
+                bool isok = GetMonitorInfo(hDesktop, info);
+                if (isok)
+                    tmp.Add(info);
+                return true;
+            };
+
+            if (EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, callback, 0))
+            {
+                return tmp;
             }
 
-            return -1;
+            return null;
         }
 
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, int dwData);
