@@ -1,4 +1,5 @@
 ﻿using DZY.WinAPI;
+using DZY.WinAPI.Desktop.API;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,6 +41,13 @@ namespace Test
             var test0 = System.Windows.Forms.Screen.AllScreens;
             var test = User32Wrapper.GetDisplays();
             var test2 = User32Wrapper.Display();
+
+            var desktopFactory = DesktopWallpaperFactory.Create();
+            desktopFactory.GetSlideshowOptions(out DesktopSlideshowOptions options, out uint slide);
+            desktopFactory.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60);
+            desktopFactory.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
+            desktopFactory.GetSlideshowOptions(out DesktopSlideshowOptions option1s, out uint sli1de);
+
         }
     }
 }
