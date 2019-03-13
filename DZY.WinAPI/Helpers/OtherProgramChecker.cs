@@ -28,7 +28,7 @@ namespace DZY.WinAPI.Helpers
         private bool EnumDesktopWindowsCallBack(IntPtr hWnd, int lParam)
         {
             //过滤当前进程
-            int pid = User32Wrapper.GetProcessId(hWnd);
+            int pid = User32WrapperEx.GetProcessId(hWnd);
             if (pid == _currentProcess.Id)
                 return true;
 
@@ -49,7 +49,7 @@ namespace DZY.WinAPI.Helpers
         {
             WINDOWPLACEMENT placment = new WINDOWPLACEMENT();
             User32Wrapper.GetWindowPlacement(handle, ref placment);
-            var pid = User32Wrapper.GetProcessId(handle);
+            var pid = User32WrapperEx.GetProcessId(handle);
 
             bool visible = User32Wrapper.IsWindowVisible(handle);
             if (visible)
@@ -89,7 +89,7 @@ namespace DZY.WinAPI.Helpers
                         var foregroundWIndow = User32Wrapper.GetForegroundWindow();
                         if (foregroundWIndow == handle)
                         {
-                            var windowText = User32Wrapper.GetWindowText(handle);
+                            var windowText = User32WrapperEx.GetWindowTextEx(handle);
                             //var desktop = User32Wrapper.GetDesktopWindow();
                             var className = User32Wrapper.GetClassName(handle);
                             if (className == "WorkerW")

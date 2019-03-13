@@ -39,8 +39,8 @@ namespace Test
         private void BtnTest_Click(object sender, RoutedEventArgs e)
         {
             var test0 = System.Windows.Forms.Screen.AllScreens;
-            var test = User32Wrapper.GetDisplays();
-            var test2 = User32Wrapper.Display();
+            var test = User32WrapperEx.GetDisplays();
+            var test2 = User32WrapperEx.Display();
 
             var desktopFactory = DesktopWallpaperFactory.Create();
             desktopFactory.GetSlideshowOptions(out DesktopSlideshowOptions options, out uint slide);

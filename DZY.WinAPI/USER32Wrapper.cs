@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace DZY.WinAPI
 {
     #region  structs
+
     /// <summary>Values to pass to the GetDCEx method.</summary>
     [Flags()]
     public enum DeviceContextValues : uint
@@ -402,7 +400,6 @@ namespace DZY.WinAPI
     }
 
     //https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagwindowplacement#SW_SHOWMAXIMIZED
-
     [Flags]
     public enum WINDOWPLACEMENTFlags : uint
     {
@@ -429,6 +426,7 @@ namespace DZY.WinAPI
         public const int GWL_EXSTYLE = -20;
         public const int GWL_USERDATA = -21;
     }
+
     public enum GetAncestorFlags
     {
         /// <summary>
@@ -548,6 +546,7 @@ namespace DZY.WinAPI
             this.y = y;
         }
     }
+
     [StructLayout(LayoutKind.Sequential)]
     public class MONITORINFO
     {
@@ -648,10 +647,29 @@ namespace DZY.WinAPI
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string DeviceKey;
     }
+
+    public enum DPI_AWARENESS
+    {
+        DPI_AWARENESS_INVALID = -1,
+        DPI_AWARENESS_UNAWARE = 0,
+        DPI_AWARENESS_SYSTEM_AWARE = 1,
+        DPI_AWARENESS_PER_MONITOR_AWARE = 2
+    }
+
+    public enum DPI_AWARENESS_CONTEXT
+    {
+        DPI_AWARENESS_CONTEXT_DEFAULT = 0, // Undocumented
+        DPI_AWARENESS_CONTEXT_UNAWARE = -1, // Undocumented
+        DPI_AWARENESS_CONTEXT_SYSTEM_AWARE = -2, // Undocumented
+        DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE = -3 // Undocumented
+    }
+
     #endregion
 
     public class User32Wrapper
     {
+        #region const
+
         public const int SPI_SETDESKWALLPAPER = 20;
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
@@ -660,6 +678,25 @@ namespace DZY.WinAPI
         public const int MONITOR_DEFAULTTOPRIMARY = 1;
         public const int MONITOR_DEFAULTTONEAREST = 2;
 
+        #endregion
+
+        [DllImport("User32.dll")]
+        public static extern DPI_AWARENESS_CONTEXT GetWindowDpiAwarenessContext(
+            IntPtr hwnd);
+
+        [DllImport("User32.dll")]
+        public static extern DPI_AWARENESS_CONTEXT GetThreadDpiAwarenessContext();
+
+        [DllImport("User32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool EnableNonClientDpiScaling(IntPtr hwnd);
+
+        [DllImport("User32.dll")]
+        public static extern DPI_AWARENESS_CONTEXT SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiContext);
+
+        [DllImport("User32.dll")]
+        public static extern DPI_AWARENESS GetAwarenessFromDpiAwarenessContext(DPI_AWARENESS_CONTEXT value);
+
         [DllImport("user32", ExactSpelling = true, SetLastError = true)]
         public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, [In, Out] ref RECT rect, [MarshalAs(UnmanagedType.U4)] int cPoints);
 
@@ -667,48 +704,7 @@ namespace DZY.WinAPI
         public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, [In, Out] ref System.Drawing.Point pt, [MarshalAs(UnmanagedType.U4)] int cPoints);
 
         [DllImport("user32.dll")]
-        private static extern bool EnumDisplayDevices(string device, uint devNum, ref DisplayDevice displayDevice, uint flags);
-
-        public static List<DisplayDevice> Display()
-        {
-            DisplayDevice d = new DisplayDevice();
-            var devices = new List<DisplayDevice>();
-            d.cb = Marshal.SizeOf(d);
-
-            for (uint id = 0; EnumDisplayDevices(null, id, ref d, 0); id++)
-            {
-                if (d.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
-                {
-                    d.cb = Marshal.SizeOf(d);
-                    EnumDisplayDevices(d.DeviceName, 0, ref d, 0);
-                    Console.WriteLine("{0}, {1}", d.DeviceName, d.DeviceString);
-                }
-
-                d.cb = Marshal.SizeOf(d);
-                devices.Add(d);
-            }
-            return devices;
-        }
-
-        public static List<MONITORINFO> GetDisplays()
-        {
-            var tmp = new List<MONITORINFO>();
-            MonitorEnumDelegate callback = (IntPtr hDesktop, IntPtr hdc, ref RECT rect, int d) =>
-            {
-                MONITORINFO info = new MONITORINFO();
-                bool isok = GetMonitorInfo(hDesktop, info);
-                if (isok)
-                    tmp.Add(info);
-                return true;
-            };
-
-            if (EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, callback, 0))
-            {
-                return tmp;
-            }
-
-            return null;
-        }
+        public static extern bool EnumDisplayDevices(string device, uint devNum, ref DisplayDevice displayDevice, uint flags);
 
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, int dwData);
 
@@ -724,7 +720,6 @@ namespace DZY.WinAPI
         [DllImport("User32.dll", ExactSpelling = true)]
         public static extern IntPtr MonitorFromPoint(POINTSTRUCT pt, int flags);
 
-
         /// <summary>
         /// Retrieves the handle to the ancestor of the specified window. 
         /// </summary>
@@ -734,6 +729,7 @@ namespace DZY.WinAPI
         /// <returns>The return value is the handle to the ancestor window.</returns>
         [DllImport("user32.dll", ExactSpelling = true)]
         public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
+
         [DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hwnd, int index);
 
@@ -745,21 +741,8 @@ namespace DZY.WinAPI
         [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumDelegate lpEnumCallbackFunction, IntPtr lParam);
 
-
         [DllImport("user32.dll", EntryPoint = "GetWindowThreadProcessId")]
         public static extern int GetWindowThreadProcessId(IntPtr hwnd, out int ID);
-
-        /// <summary>
-        /// 获取窗口的进程号
-        /// </summary>
-        /// <param name="hwnd">窗口句柄</param>
-        /// <returns>进程号</returns>
-        public static int GetProcessId(IntPtr hwnd)
-        {
-            int processId;
-            GetWindowThreadProcessId(hwnd, out processId);
-            return processId;
-        }
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll")]
@@ -776,11 +759,9 @@ namespace DZY.WinAPI
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool UnhookWinEvent(IntPtr hook);
 
-
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
-
 
         /// <summary>
         /// Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified offset into the extra window memory.
@@ -796,12 +777,6 @@ namespace DZY.WinAPI
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
-
-        public static bool SetWindowPos(IntPtr targeHandler, RECT rect)
-        {
-            var ok = SetWindowPos(targeHandler, IntPtr.Zero, rect.Left, rect.Top, rect.Width, rect.Height, 0);
-            return ok;
-        }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, StringBuilder vParam, UInt32 winIni);
@@ -846,19 +821,6 @@ namespace DZY.WinAPI
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
-
-        public static string GetWindowText(IntPtr hWnd)
-        {
-            int size = GetWindowTextLength(hWnd);
-            if (size > 0)
-            {
-                var builder = new StringBuilder(size + 1);
-                GetWindowText(hWnd, builder, builder.Capacity);
-                return builder.ToString();
-            }
-
-            return string.Empty;
-        }
 
         [DllImport("user32.dll", EntryPoint = "GetDC")]
         public static extern IntPtr GetDC(IntPtr ptr);
@@ -910,6 +872,5 @@ namespace DZY.WinAPI
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-
     }
 }
