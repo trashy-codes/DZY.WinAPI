@@ -416,17 +416,6 @@ namespace DZY.WinAPI
         SW_SHOWNORMAL = 1
     }
 
-    public abstract class WindowLongConstants
-    {
-        public const int GWL_WNDPROC = -4;
-        public const int GWL_HINSTANCE = -6;
-        public const int GWL_HWNDPARENT = -8;
-        public const int GWL_ID = -12;
-        public const int GWL_STYLE = -16;
-        public const int GWL_EXSTYLE = -20;
-        public const int GWL_USERDATA = -21;
-    }
-
     public enum GetAncestorFlags
     {
         /// <summary>
@@ -731,7 +720,7 @@ namespace DZY.WinAPI
         public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
 
         [DllImport("user32.dll")]
-        public static extern int GetWindowLong(IntPtr hwnd, int index);
+        public static extern int GetWindowLong(IntPtr hwnd, WindowLongFlags index);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowRect")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
