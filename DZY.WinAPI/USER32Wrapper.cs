@@ -669,6 +669,10 @@ namespace DZY.WinAPI
 
         #endregion
 
+        [DllImport("user32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetProcessDPIAware();
+
         [DllImport("User32.dll")]
         public static extern DPI_AWARENESS_CONTEXT GetWindowDpiAwarenessContext(
             IntPtr hwnd);
