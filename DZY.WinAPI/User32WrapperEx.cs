@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
+using System.Windows.Interop;
 using static DZY.WinAPI.User32Wrapper;
 
 namespace DZY.WinAPI
@@ -78,6 +80,16 @@ namespace DZY.WinAPI
             }
 
             return string.Empty;
+        }
+
+        public static void HideWindowFromSwithcher(Window window)
+        {
+            WindowInteropHelper wndHelper = new WindowInteropHelper(window);
+
+            int exStyle = (int)User32Wrapper.GetWindowLong(wndHelper.Handle, WindowLongFlags.GWL_EXSTYLE);
+
+            exStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
+            User32Wrapper.SetWindowLong(wndHelper.Handle, WindowLongFlags.GWL_EXSTYLE, exStyle);
         }
 
         #region DPI 相关
