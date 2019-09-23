@@ -9,5 +9,8 @@ namespace DZY.WinAPI
     {
         [DllImport("kernel32.dll")]
         public static extern bool SetProcessWorkingSetSize(IntPtr handle, int minimumWorkingSetSize, int maximumWorkingSetSize);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
     }
 }

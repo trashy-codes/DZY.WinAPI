@@ -668,7 +668,8 @@ namespace DZY.WinAPI
         public const int MONITOR_DEFAULTTONEAREST = 2;
 
         #endregion
-
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, WINDOWPLACEMENTFlags nCmdShow);
         [DllImport("user32")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetProcessDPIAware();
