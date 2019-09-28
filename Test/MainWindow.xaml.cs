@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -48,6 +49,11 @@ namespace Test
             desktopFactory.SetSlideshowOptions(DesktopSlideshowOptions.DSO_SHUFFLEIMAGES, 1000 * 60 * 60 * 24);
             desktopFactory.GetSlideshowOptions(out DesktopSlideshowOptions option1s, out uint sli1de);
 
+        }
+
+        private void BtnWindowsSettingTest_Click(object sender, RoutedEventArgs e)
+        {
+            _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETCLIENTAREAANIMATION, 0, true, User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
         }
     }
 }

@@ -653,14 +653,55 @@ namespace DZY.WinAPI
         DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE = -3 // Undocumented
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ANIMATIONINFO
+    {
+        /// <summary>
+        /// Creates an AMINMATIONINFO structure.
+        /// </summary>
+        /// <param name="iMinAnimate">If non-zero and SPI_SETANIMATION is specified, enables minimize/restore animation.</param>
+        public ANIMATIONINFO(int iMinAnimate)
+        {
+            cbSize = (uint)Marshal.SizeOf(typeof(ANIMATIONINFO));
+            this.iMinAnimate = iMinAnimate;
+        }
+
+        /// <summary>
+        /// Always must be set to (System.UInt32)Marshal.SizeOf(typeof(ANIMATIONINFO)).
+        /// </summary>
+        public uint cbSize;
+
+        /// <summary>
+        /// If non-zero, minimize/restore animation is enabled, otherwise disabled.
+        /// </summary>
+        public int iMinAnimate;
+    }
+
     #endregion
 
     public class User32Wrapper
     {
         #region const
 
+        //https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfoa?redirectedfrom=MSDN
+        public const uint SPIF_UPDATEINIFILE = 0x01;
+        public const uint SPIF_SENDWININICHANGE = 0x02;
+        public const uint SPI_SETANIMATION = 0x0049;
+        public const uint SPI_SETMENUANIMATION = 0x1003;
+        public const uint SPI_SETCOMBOBOXANIMATION = 0x1005;
+        public const uint SPI_SETLISTBOXSMOOTHSCROLLING = 0x1007;
+        public const uint SPI_SETMENUFADE = 0x1013;
+        public const uint SPI_SETSELECTIONFADE = 0x1015;
+        public const uint SPI_SETTOOLTIPANIMATION = 0x1017;
+        public const uint SPI_SETTOOLTIPFADE = 0x1019;
+        public const uint SPI_SETCURSORSHADOW = 0x101B;
+        public const uint SPI_SETDROPSHADOW = 0x1025;
+        public const uint SPI_SETCLIENTAREAANIMATION = 0x1043;
+
+        public const uint SPI_GETUIEFFECTS = 0x103E;
+        public const uint SPI_GETTOOLTIPANIMATION = 0x1016;
+
         public const int SPI_SETDESKWALLPAPER = 20;
-        public const int SPIF_UPDATEINIFILE = 0x01;
         public const uint SPI_GETDESKWALLPAPER = 0x0073;
 
         public const int MONITOR_DEFAULTTONULL = 0;
@@ -772,8 +813,15 @@ namespace DZY.WinAPI
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, StringBuilder vParam, UInt32 winIni);
+        //https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfoa?redirectedfrom=MSDN
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, bool pvParam, uint fWinIni);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref ANIMATIONINFO pvParam, uint fWinIni);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
