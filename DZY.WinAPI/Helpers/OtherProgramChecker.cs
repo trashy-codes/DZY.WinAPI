@@ -10,36 +10,43 @@ namespace DZY.WinAPI.Helpers
     public class OtherProgramChecker
     {
         private bool _maximized = false;
-        private static Process _currentProcess;
-        private bool _onlyFullScreen;
+        private static int? _ignorePid;
+        private readonly bool _onlyFullScreen;
+        private IntPtr _maximizedHandle;
 
-        public OtherProgramChecker(Process currentProcess, bool onlyFullScreen = false)
+        public OtherProgramChecker(int? currentProcess = null, bool onlyFullScreen = false)
         {
-            _currentProcess = currentProcess;
+            _ignorePid = currentProcess;
             //是否只检测全屏，任务栏没遮挡不算
             _onlyFullScreen = onlyFullScreen;
         }
 
-        public bool CheckMaximized()
+        public bool CheckMaximized(out IntPtr maximizedHandle)
         {
             bool ok = User32Wrapper.EnumDesktopWindows(IntPtr.Zero, new User32Wrapper.EnumDelegate(EnumDesktopWindowsCallBack), IntPtr.Zero);
+            maximizedHandle = _maximizedHandle;
             return _maximized;
         }
 
         private bool EnumDesktopWindowsCallBack(IntPtr hWnd, int lParam)
         {
-            //过滤当前进程
-            int pid = User32WrapperEx.GetProcessId(hWnd);
-            if (pid == _currentProcess.Id)
-                return true;
+            if (_ignorePid != null)
+            {
+                //过滤当前进程
+                int pid = User32WrapperEx.GetProcessId(hWnd);
+                if (pid == _ignorePid)
+                    return true;
+            }
 
             _maximized = IsMAXIMIZED(hWnd, _onlyFullScreen);
             if (_maximized)
+            {
+                _maximizedHandle = hWnd;
                 return false;
+            }
 
             return true;
         }
-
 
         /// <summary>
         /// 窗口是否是最大化
@@ -50,15 +57,15 @@ namespace DZY.WinAPI.Helpers
         {
             WINDOWPLACEMENT placment = new WINDOWPLACEMENT();
             User32Wrapper.GetWindowPlacement(handle, ref placment);
-            var pid = User32WrapperEx.GetProcessId(handle);
+            //_ = User32WrapperEx.GetProcessId(handle);
 
             bool visible = User32Wrapper.IsWindowVisible(handle);
             if (visible)
             {
                 if (!onlyFullScreen && placment.showCmd == WINDOWPLACEMENTFlags.SW_SHOWMAXIMIZED)
                 {//窗口最大化
-                    // Exclude suspended Windows apps
-                    int ok = DwmapiWrapper.DwmGetWindowAttribute(handle, DwmapiWrapper.DWMWINDOWATTRIBUTE.DWMWA_CLOAKED, out var cloaked, Marshal.SizeOf<bool>());
+                 // Exclude suspended Windows apps
+                    _ = DwmapiWrapper.DwmGetWindowAttribute(handle, DwmapiWrapper.DWMWINDOWATTRIBUTE.DWMWA_CLOAKED, out var cloaked, Marshal.SizeOf<bool>());
                     //隐藏的UWP窗口
                     if (cloaked)
                     {
@@ -83,14 +90,14 @@ namespace DZY.WinAPI.Helpers
                     int with = r.Right - r.Left;
                     int height = r.Bottom - r.Top;
 
-                    if (height == System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height
-                        && with == System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width)
+                    if (height == Screen.PrimaryScreen.Bounds.Height
+                        && with == Screen.PrimaryScreen.Bounds.Width)
                     {
                         //当前窗口最大化，进入了游戏
                         var foregroundWIndow = User32Wrapper.GetForegroundWindow();
                         if (foregroundWIndow == handle)
                         {
-                            var windowText = User32WrapperEx.GetWindowTextEx(handle);
+                            _ = User32WrapperEx.GetWindowTextEx(handle);
                             //var desktop = User32Wrapper.GetDesktopWindow();
                             var className = User32Wrapper.GetClassName(handle);
                             if (className == "WorkerW")

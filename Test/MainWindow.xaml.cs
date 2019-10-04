@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -33,8 +34,9 @@ namespace Test
         {
             await Task.Delay(2000);
             var cp = Process.GetCurrentProcess();
-            var result = new DZY.WinAPI.Helpers.OtherProgramChecker(cp).CheckMaximized();
-            MessageBox.Show(result.ToString());
+            var result = new DZY.WinAPI.Helpers.OtherProgramChecker(cp.Id).CheckMaximized(out IntPtr fullscreenWindow);
+            var test = Screen.FromHandle(fullscreenWindow);
+            System.Windows.Forms.MessageBox.Show(result.ToString());
         }
 
         private void BtnTest_Click(object sender, RoutedEventArgs e)
