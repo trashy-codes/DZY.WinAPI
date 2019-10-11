@@ -12,7 +12,7 @@ namespace DZY.WinAPI.Helpers
         private bool _maximized = false;
         private static int? _ignorePid;
         private readonly bool _onlyFullScreen;
-        private IntPtr _maximizedHandle;
+        private List<Screen> _maximizedScreens;
 
         public OtherProgramChecker(int? currentProcess = null, bool onlyFullScreen = false)
         {
@@ -21,11 +21,12 @@ namespace DZY.WinAPI.Helpers
             _onlyFullScreen = onlyFullScreen;
         }
 
-        public bool CheckMaximized(out IntPtr maximizedHandle)
+        public void CheckMaximized(out List<Screen> maximizedScreens)
         {
+            _maximizedScreens = new List<Screen>();
             bool ok = User32Wrapper.EnumDesktopWindows(IntPtr.Zero, new User32Wrapper.EnumDelegate(EnumDesktopWindowsCallBack), IntPtr.Zero);
-            maximizedHandle = _maximizedHandle;
-            return _maximized;
+            maximizedScreens = _maximizedScreens;
+            //return _maximized;
         }
 
         private bool EnumDesktopWindowsCallBack(IntPtr hWnd, int lParam)
@@ -41,8 +42,15 @@ namespace DZY.WinAPI.Helpers
             _maximized = IsMAXIMIZED(hWnd, _onlyFullScreen);
             if (_maximized)
             {
-                _maximizedHandle = hWnd;
-                return false;
+                var screen = Screen.FromHandle(hWnd);
+                if (_maximizedScreens.Contains(screen))
+                    return true;
+
+                _maximizedScreens.Add(screen);
+                if (Screen.AllScreens.Length == _maximizedScreens.Count)
+                    //所有屏幕都已经全屏，不用继续检查
+                    return false;
+                return true;
             }
 
             return true;

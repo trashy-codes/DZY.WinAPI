@@ -30,13 +30,11 @@ namespace Test
             InitializeComponent();
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Delay(2000);
             var cp = Process.GetCurrentProcess();
-            var result = new DZY.WinAPI.Helpers.OtherProgramChecker(cp.Id).CheckMaximized(out IntPtr fullscreenWindow);
-            var test = Screen.FromHandle(fullscreenWindow);
-            System.Windows.Forms.MessageBox.Show(result.ToString());
+            new DZY.WinAPI.Helpers.OtherProgramChecker(cp.Id).CheckMaximized(out List<Screen> fullscreens);
+            System.Windows.Forms.MessageBox.Show(fullscreens.Count.ToString());
         }
 
         private void BtnTest_Click(object sender, RoutedEventArgs e)
