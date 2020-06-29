@@ -4,14 +4,11 @@
     <TargetFrameworks>net452;netcoreapp3.0</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-    <Version>2.0.9</Version>
+    <Version>2.0.10</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\Output</OutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.WindowsDesktop" Version="3.0.0-preview3-27504-2" />
-  </ItemGroup>
 </Project>
