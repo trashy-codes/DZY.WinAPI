@@ -959,7 +959,7 @@ namespace DZY.WinAPI
         /// </remarks>
         [DllImport("user32.dll", CharSet = CharSet.Auto,
             CallingConvention = CallingConvention.StdCall)]
-        internal static extern int CallNextHookEx(
+        public static extern int CallNextHookEx(
             int idHook,
             int nCode,
             int wParam,
@@ -997,7 +997,7 @@ namespace DZY.WinAPI
         /// </remarks>
         [DllImport("user32.dll", CharSet = CharSet.Auto,
             CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-        internal static extern int SetWindowsHookEx(
+        public static extern int SetWindowsHookEx(
             int idHook,
             HookCallback lpfn,
             IntPtr hMod,
@@ -1018,6 +1018,6 @@ namespace DZY.WinAPI
         /// </remarks>
         [DllImport("user32.dll", CharSet = CharSet.Auto,
             CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-        internal static extern int UnhookWindowsHookEx(int idHook);
+        public static extern int UnhookWindowsHookEx(int idHook);
     }
 }
