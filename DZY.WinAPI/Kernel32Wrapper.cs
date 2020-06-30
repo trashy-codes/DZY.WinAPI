@@ -12,5 +12,7 @@ namespace DZY.WinAPI
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetConsoleWindow();
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
     }
 }
