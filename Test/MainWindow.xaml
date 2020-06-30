@@ -10,6 +10,7 @@
         <StackPanel>
             <Button Click="Button_Click">CheckFullScreen</Button>
             <Button Click="BtnWindowsSettingTest_Click">Windows Setting</Button>
+            <Button Click="BtnCreateProcess_Click">CreateProcess</Button>
             <Button Click="BtnTest_Click">Test</Button>
         </StackPanel>
     </Grid>

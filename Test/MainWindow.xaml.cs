@@ -55,5 +55,35 @@ namespace Test
         {
             _ = User32Wrapper.SystemParametersInfo(User32Wrapper.SPI_SETCLIENTAREAANIMATION, 0, true, User32Wrapper.SPIF_UPDATEINIFILE | User32Wrapper.SPIF_SENDWININICHANGE);
         }
+
+        private void BtnCreateProcess_Click(object sender, RoutedEventArgs e)
+        {
+            //const uint NORMAL_PRIORITY_CLASS = 0x0020;
+
+            //bool retValue;
+            //string Application = Environment.GetEnvironmentVariable("windir") + @"\Notepad.exe";
+            //Application = @"D:\github-categorized\dotnet\LiveWallpaperEngine\LiveWallpaperEngine.Samples.NetCore.Test\WallpaperSamples\game\sheep.exe";
+            //string CommandLine = @" c:\boot.ini";
+            //PROCESS_INFORMATION pInfo = new PROCESS_INFORMATION();
+            //STARTUP_INFO sInfo = new STARTUP_INFO();
+            //SECURITY_ATTRIBUTES pSec = new SECURITY_ATTRIBUTES();
+            //SECURITY_ATTRIBUTES tSec = new SECURITY_ATTRIBUTES();
+            //pSec.nLength = Marshal.SizeOf(pSec);
+            //tSec.nLength = Marshal.SizeOf(tSec);
+
+            //const int STARTF_USEPOSITION = 0x00000004;
+            //sInfo.dwFlags = STARTF_USEPOSITION;
+            //sInfo.dwX = 11111115;
+            //sInfo.dwY = 111115;
+            //sInfo.cb = Marshal.SizeOf(sInfo);
+
+            ////Open Notepad
+            //retValue = Kernel32Wrapper.CreateProcess(Application, null,
+            //ref pSec, ref tSec, false, NORMAL_PRIORITY_CLASS,
+            //IntPtr.Zero, null, ref sInfo, out pInfo);
+
+            //Console.WriteLine("Process ID (PID): " + pInfo.dwProcessId);
+            //Console.WriteLine("Process Handle : " + pInfo.hProcess);
+        }
     }
 }
