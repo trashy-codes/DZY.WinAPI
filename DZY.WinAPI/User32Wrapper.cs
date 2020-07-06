@@ -1022,5 +1022,9 @@ namespace DZY.WinAPI
         [DllImport("user32.dll", CharSet = CharSet.Auto,
             CallingConvention = CallingConvention.StdCall, SetLastError = true)]
         public static extern int UnhookWindowsHookEx(int idHook);
+
+        [DllImport("User32.dll", EntryPoint = "PostMessageW", CallingConvention = CallingConvention.Winapi
+         , CharSet = CharSet.Unicode)]
+        public extern static IntPtr PostMessageW(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
     }
 }
