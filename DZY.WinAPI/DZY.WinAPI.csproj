@@ -4,7 +4,7 @@
     <TargetFrameworks>net452;netcoreapp3.0</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-    <Version>2.0.16</Version>
+    <Version>2.0.17</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
