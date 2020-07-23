@@ -1026,5 +1026,9 @@ namespace DZY.WinAPI
         [DllImport("User32.dll", EntryPoint = "PostMessageW", CallingConvention = CallingConvention.Winapi
          , CharSet = CharSet.Unicode)]
         public extern static IntPtr PostMessageW(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetFocus(IntPtr hWnd);
+        [DllImport("User32.dll")]
+        public static extern int SetForegroundWindow(IntPtr hWnd);
     }
 }
