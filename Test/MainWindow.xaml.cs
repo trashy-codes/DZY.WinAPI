@@ -1,5 +1,6 @@
 ﻿using DZY.WinAPI;
 using DZY.WinAPI.Desktop.API;
+using DZY.WinAPI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -84,6 +85,15 @@ namespace Test
 
             //Console.WriteLine("Process ID (PID): " + pInfo.dwProcessId);
             //Console.WriteLine("Process Handle : " + pInfo.hProcess);
+        }
+
+        ProcessJobTracker pj = null;
+        private void BtnProcessJobTracker_Click(object sender, RoutedEventArgs e)
+        {
+            var p = Process.Start("notepad.exe");
+            if (pj == null)
+                pj = new ProcessJobTracker();
+            pj.AddProcess(p);
         }
     }
 }

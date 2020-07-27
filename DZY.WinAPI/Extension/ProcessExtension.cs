@@ -9,7 +9,7 @@ namespace DZY.WinAPI.Extension
         {
             foreach (ProcessThread thread in process.Threads)
             {
-                var pOpenThread = Kernel32Wrapper.OpenThread(Kernel32Wrapper.ThreadAccess.SUSPEND_RESUME, false, (uint)thread.Id);
+                var pOpenThread = Kernel32Wrapper.OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)thread.Id);
                 if (pOpenThread == IntPtr.Zero)
                 {
                     break;
@@ -21,7 +21,7 @@ namespace DZY.WinAPI.Extension
         {
             foreach (ProcessThread thread in process.Threads)
             {
-                var pOpenThread = Kernel32Wrapper.OpenThread(Kernel32Wrapper.ThreadAccess.SUSPEND_RESUME, false, (uint)thread.Id);
+                var pOpenThread = Kernel32Wrapper.OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)thread.Id);
                 if (pOpenThread == IntPtr.Zero)
                 {
                     break;

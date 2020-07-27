@@ -165,13 +165,73 @@ namespace DZY.WinAPI
         /// </summary>
         public int bInheritHandle;
     }
+    [Flags]
+    public enum ThreadAccess : int
+    {
+        TERMINATE = (0x0001),
+        SUSPEND_RESUME = (0x0002),
+        GET_CONTEXT = (0x0008),
+        SET_CONTEXT = (0x0010),
+        SET_INFORMATION = (0x0020),
+        QUERY_INFORMATION = (0x0040),
+        SET_THREAD_TOKEN = (0x0080),
+        IMPERSONATE = (0x0100),
+        DIRECT_IMPERSONATION = (0x0200)
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct IO_COUNTERS
+    {
+        public UInt64 ReadOperationCount;
+        public UInt64 WriteOperationCount;
+        public UInt64 OtherOperationCount;
+        public UInt64 ReadTransferCount;
+        public UInt64 WriteTransferCount;
+        public UInt64 OtherTransferCount;
+    }
+    [Flags]
+    public enum JOBOBJECTLIMIT : uint
+    {
+        JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x2000
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct JOBOBJECT_BASIC_LIMIT_INFORMATION
+    {
+        public Int64 PerProcessUserTimeLimit;
+        public Int64 PerJobUserTimeLimit;
+        public JOBOBJECTLIMIT LimitFlags;
+        public UIntPtr MinimumWorkingSetSize;
+        public UIntPtr MaximumWorkingSetSize;
+        public UInt32 ActiveProcessLimit;
+        public Int64 Affinity;
+        public UInt32 PriorityClass;
+        public UInt32 SchedulingClass;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+    {
+        public JOBOBJECT_BASIC_LIMIT_INFORMATION BasicLimitInformation;
+        public IO_COUNTERS IoInfo;
+        public UIntPtr ProcessMemoryLimit;
+        public UIntPtr JobMemoryLimit;
+        public UIntPtr PeakProcessMemoryUsed;
+        public UIntPtr PeakJobMemoryUsed;
+    }
+    public enum JobObjectInfoType
+    {
+        AssociateCompletionPortInformation = 7,
+        BasicLimitInformation = 2,
+        BasicUIRestrictions = 4,
+        EndOfJobTimeInformation = 6,
+        ExtendedLimitInformation = 9,
+        SecurityLimitInformation = 5,
+        GroupInformation = 11
+    }
 
     #endregion
     public class Kernel32Wrapper
     {
         [DllImport("kernel32.dll")]
         public static extern bool SetProcessWorkingSetSize(IntPtr handle, int minimumWorkingSetSize, int maximumWorkingSetSize);
-
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetConsoleWindow();
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -181,8 +241,7 @@ namespace DZY.WinAPI
         /// </summary>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CreateProcess
-        (
+        public static extern bool CreateProcess(
             string lpApplicationName,
             string lpCommandLine,
             ref SECURITY_ATTRIBUTES lpProcessAttributes,
@@ -195,25 +254,19 @@ namespace DZY.WinAPI
             [In] ref STARTUP_INFO lpStartupInfo,
             out PROCESS_INFORMATION lpProcessInformation
         );
-
-        [Flags]
-        public enum ThreadAccess : int
-        {
-            TERMINATE = (0x0001),
-            SUSPEND_RESUME = (0x0002),
-            GET_CONTEXT = (0x0008),
-            SET_CONTEXT = (0x0010),
-            SET_INFORMATION = (0x0020),
-            QUERY_INFORMATION = (0x0040),
-            SET_THREAD_TOKEN = (0x0080),
-            IMPERSONATE = (0x0100),
-            DIRECT_IMPERSONATION = (0x0200)
-        }
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
         [DllImport("kernel32.dll")]
         public static extern uint SuspendThread(IntPtr hThread);
         [DllImport("kernel32.dll")]
         public static extern int ResumeThread(IntPtr hThread);
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        public static extern IntPtr CreateJobObject(object a, string lpName);
+        [DllImport("kernel32.dll")]
+        public static extern bool SetInformationJobObject(IntPtr job, JobObjectInfoType infoType, IntPtr lpJobObjectInfo, uint cbJobObjectInfoLength);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool AssignProcessToJobObject(IntPtr job, IntPtr process);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hObject);
     }
 }
